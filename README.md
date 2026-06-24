@@ -4,7 +4,7 @@
 
 **Launch any TUI app in a popup or a window, scoped to the current pane's directory, with one configurable binding per app.**
 
-[![Tests](https://github.com/gufranco/tmux-launcher-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/gufranco/tmux-launcher-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](CHANGELOG.md)
+[![Tests](https://github.com/tmux-revamped/tmux-launcher-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/tmux-revamped/tmux-launcher-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](CHANGELOG.md)
 
 </div>
 
@@ -12,7 +12,7 @@
 
 Bind a key to open `lazygit`, `yazi`, `lf`, `htop`, `k9s`, or any other terminal app, in a floating popup or a fresh window, always starting in the current pane's directory. You list the apps and set a key, command, mode, and size for each. Popups need tmux 3.2, so on older tmux a popup launcher falls back to a window automatically.
 
-Built from [tmux-plugin-template](https://github.com/gufranco/tmux-plugin-template).
+Built from [tmux-plugin-template](https://github.com/tmux-revamped/tmux-plugin-template).
 
 <table>
 <tr>
@@ -30,7 +30,7 @@ Built from [tmux-plugin-template](https://github.com/gufranco/tmux-plugin-templa
 List your apps in `@launcher_apps`. For each app `<id>`, set its options. `lazygit` (popup, `C-g`) and `yazi` (window, `C-y`) ship as working defaults.
 
 ```tmux
-set -g @plugin 'gufranco/tmux-launcher-revamped'
+set -g @plugin 'tmux-revamped/tmux-launcher-revamped'
 
 # add your own apps to the list
 set -g @launcher_apps 'lazygit yazi lazydocker htop k9s'
@@ -96,7 +96,7 @@ set -g @launcher_lazygit_height '85%'
 With [TPM](https://github.com/tmux-plugins/tpm), add to `~/.tmux.conf`:
 
 ```tmux
-set -g @plugin 'gufranco/tmux-launcher-revamped'
+set -g @plugin 'tmux-revamped/tmux-launcher-revamped'
 ```
 
 Then press `prefix + I` to install. Out of the box, `prefix + C-g` opens lazygit and `prefix + C-y` opens yazi.
@@ -104,7 +104,7 @@ Then press `prefix + I` to install. Out of the box, `prefix + C-g` opens lazygit
 Manual install:
 
 ```bash
-git clone https://github.com/gufranco/tmux-launcher-revamped ~/.tmux/plugins/tmux-launcher-revamped
+git clone https://github.com/tmux-revamped/tmux-launcher-revamped ~/.tmux/plugins/tmux-launcher-revamped
 run-shell ~/.tmux/plugins/tmux-launcher-revamped/launcher-revamped.tmux
 ```
 
