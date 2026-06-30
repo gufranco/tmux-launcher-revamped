@@ -4,11 +4,11 @@
 
 **Launch any TUI app in a popup or a window, scoped to the current pane's directory, with one configurable binding per app.**
 
-[![Tests](https://github.com/tmux-revamped/tmux-launcher-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/tmux-revamped/tmux-launcher-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](CHANGELOG.md)
+[![Tests](https://github.com/tmux-revamped/tmux-launcher-revamped/actions/workflows/tests.yml/badge.svg)](https://github.com/tmux-revamped/tmux-launcher-revamped/actions/workflows/tests.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](CHANGELOG.md)
 
 </div>
 
-**any** app · **popup or window** · **tmux 1.9 to 3.5** · **41** tests · **95%+** coverage
+**any** app · **popup, window, or split** · **tmux 1.9 to 3.5** · **83** tests · **95%+** coverage
 
 Bind a key to open `lazygit`, `yazi`, `lf`, `htop`, `k9s`, or any other terminal app, in a floating popup or a fresh window, always starting in the current pane's directory. You list the apps and set a key, command, mode, and size for each. Popups need tmux 3.2, so on older tmux a popup launcher falls back to a window automatically.
 
@@ -49,12 +49,66 @@ set -g @launcher_k9s_key 'C-s'
 | `@launcher_apps` | `lazygit yazi` | the apps to bind |
 | `@launcher_<id>_key` | built-in for `lazygit`/`yazi`, else required | the prefix key |
 | `@launcher_<id>_command` | the id itself | the shell command to run |
-| `@launcher_<id>_mode` | `popup` (`yazi` is `window`) | `popup` or `window` |
+| `@launcher_<id>_mode` | `popup` (`yazi` is `window`) | `popup`, `window`, or `split` |
 | `@launcher_<id>_name` | the id itself | window name, in `window` mode |
 | `@launcher_<id>_width` | `80%` | popup width |
 | `@launcher_<id>_height` | `80%` | popup height |
+| `@launcher_<id>_marker` | none | walk up to the dir holding this marker (e.g. `.git`); falls back to the pane path |
+| `@launcher_<id>_if` | none | predicate run before launch; non-zero makes the key inert (`LAUNCHER_PATH` is exported) |
+| `@launcher_<id>_prompt` | none | prompt text; the typed value is appended to the command |
+| `@launcher_<id>_group` | none | space separated app ids opened together as a tiled dashboard |
+| `@launcher_<id>_host` | none | remote host; the command is wrapped in `ssh -t` |
+| `@launcher_<id>_reuse` | off | in window mode, select an existing window instead of duplicating |
+| `@launcher_<id>_env` | none | env vars prefixed onto the command (e.g. `FOO=bar`) |
+| `@launcher_<id>_pre` | none | command run before the app (e.g. `direnv allow`) |
+| `@launcher_<id>_exit` | none | command run after the app exits (e.g. refresh a status line) |
+| `@launcher_marker` | none | default marker for every app when no per-app marker is set |
+| `@launcher_max_depth` | `20` | how many levels the marker walk climbs |
+| `@launcher_skip_missing` | off | drop any app whose local command is absent (remote apps are not probed) |
+| `@launcher_menu_key` | none | key that opens a `display-menu` of every app (works below tmux 3.2) |
+| `@launcher_picker_key` | none | key that opens an fzf app picker in a popup |
 
 An app listed without a key and without a built-in default is skipped, so a typo never produces a broken binding.
+
+## More launch modes
+
+Beyond a popup or window per app, each launcher can do more:
+
+```tmux
+# open lazygit only inside a git repo; a dead key does nothing
+set -g @launcher_lazygit_if 'git -C "$LAUNCHER_PATH" rev-parse 2>/dev/null'
+
+# scope to the project root, not the deep cwd
+set -g @launcher_lazygit_marker '.git'
+
+# a man-page launcher that prompts for the topic
+set -g @launcher_man_key    'C-m'
+set -g @launcher_man_prompt 'man:'
+
+# a dashboard: lazygit, htop, and logs in one key
+set -g @launcher_dash_key   'C-d'
+set -g @launcher_dash_group 'lazygit htop logs'
+
+# k9s against a remote box
+set -g @launcher_k9s_key  'C-s'
+set -g @launcher_k9s_host 'box.example'
+
+# open beside your work instead of over it
+set -g @launcher_htop_key  'C-t'
+set -g @launcher_htop_mode 'split'
+
+# refresh the git status segment after lazygit quits
+set -g @launcher_lazygit_exit 'tmux refresh-client -S'
+
+# one menu key listing every app, and an fzf picker
+set -g @launcher_menu_key   'C-l'
+set -g @launcher_picker_key 'C-p'
+
+# drop apps whose command is not installed
+set -g @launcher_skip_missing 'on'
+```
+
+The menu uses `display-menu`, which works on tmux below 3.2 where popups do not, so it stays a usable launcher on older tmux.
 
 ## Examples
 
